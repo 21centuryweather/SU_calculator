@@ -1,0 +1,13 @@
+name: SU_calculator
+title: SU_calculator
+username: paocorrales
+account: paocorrales
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 15559976
+bundleId: 10956598
+url: https://paocorrales.shinyapps.io/SU_calculator/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: queue_limits.xlsx

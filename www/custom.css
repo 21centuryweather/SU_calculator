@@ -1,0 +1,55 @@
+/* Change the color and font of the main title */
+h1, h2, h3, h4 {
+  color: #0C93BD;        
+  font-weight: bold;
+  font-family: 'Lato', Arial, sans-serif;
+}
+
+/* Change the font for the whole app */
+body {
+  font: 18px/1.8 'Lato', Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  color: #000;
+  min-height: 100%;
+} 
+
+a {
+  color: #F4857F;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+a:hover {
+  color: #B7533D;
+}
+
+a:visited {
+  color: #B7533D;
+}
+
+#su_result {
+  font-size: 24px;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+/* Base styling for all limit text */
+.limit-text {
+  font-size: 14px;
+  color: #666;
+  margin-top: -5px;
+  margin-bottom: 5px;
+}
+
+/* Styling for when limits are exceeded */
+.limit-exceeded {
+  color: #B7533D !important;
+  font-weight: bold !important;
+  font-style: normal !important;
+}
+
+/* Styling for when values are within limits */
+.limit-ok {
+  color: #0C93BD !important;
+  font-style: normal !important;
+}
