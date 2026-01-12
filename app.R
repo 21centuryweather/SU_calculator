@@ -10,45 +10,16 @@
 library(shiny)
 library(shinyjs)
 library(data.table)
+source("functions.R")
 
 queue_param <-fread("queue_limits.csv")
 
 # Node and queue definitions
 node_queues <- list(
   "Normal nodes (Cascade Lake)" = queue_param[node_type == "cascade_lake", queue],
-  "ARE (Broadwell)" = queue_param[node_type == "broadwell", queue]
+  "ARE (Broadwell)" = queue_param[node_type == "broadwell", queue],
+  "GPU" = queue_param[node_type == "gpu", queue]
 )
-
-
-get_walltime_limit <- function(this_queue, this_cpus) {
-  
-  queue_param[queue == this_queue & max_cpus >= this_cpus] |> 
-    _[max_cpus == min(max_cpus), max_walltime]
-  
-}
-
-get_memory_limit <- function(this_queue) {
-  
-  queue_param[queue == this_queue] |> 
-    _[, unique(max_memory)]
-  
-}
-# this_queue <- "normal" 
-# this_cpus <- 2000
-
-calculate_SU <- function(this_queue, cpus, memory, walltime) {
-  
-  queue_cost = queue_param[this_queue == queue, unique(cost)]
-  
-  memory = memory/4 # Memory is charged in 4 GiB blocks, so 16 GiB = 4, 40 GiB = 10, and so on
-  
-  queue_cost * max(cpus, memory) * walltime 
-  
-  
-}
-
-
-
 
 ui <- fluidPage(
   
@@ -61,7 +32,7 @@ ui <- fluidPage(
     sidebarPanel(
       radioButtons("node", "Select node type:", choices = names(node_queues)),
       selectInput("queue", "Queue:", choices = node_queues[[1]]),
-      numericInput("cpus", "CPUs:", value = 1, min = 1),
+      numericInput("cpus", "CPU/GPUs:", value = 1, min = 1),
       div(class = "limit-text", uiOutput("cpu_limit_text")),
       
       numericInput("memory", "Memory (GB):", value = 1, min = 1),
@@ -127,18 +98,13 @@ server <- function(input, output, session) {
   
   # Display CPU limit information
   output$cpu_limit_text <- renderUI({
-    req(input$queue)
+    req(input$queue, input$cpus)
     max_cpus <- queue_param[queue == input$queue, max(max_cpus)]
     if(!is.na(max_cpus)) {
-      if(input$cpus > max_cpus) {
-        tags$span(paste("Max CPUs for this queue:", max_cpus),
-                  class = "limit-exceeded")
-      } else {
-        tags$span(paste("Max CPUs for this queue:", max_cpus),
-                  class = "limit-ok")
-      }
+      cpu_message(input$cpus, input$queue, max_cpus)
     }
   })
+  
   
   # Display memory limit information
   output$memory_limit_text <- renderUI({
@@ -161,10 +127,10 @@ server <- function(input, output, session) {
     walltime_limit <- current_walltime_limit()
     if(!is.na(walltime_limit) && length(walltime_limit) > 0) {
       if(input$walltime > walltime_limit) {
-        tags$span(paste("Max walltime for", input$cpus, "CPUs:", walltime_limit, "hours"), 
+        tags$span(paste("Max walltime for", input$cpus, "CPU/GPUs:", walltime_limit, "hours"), 
                   class = "limit-exceeded")
       } else {
-        tags$span(paste("Max walltime for", input$cpus, "CPUs:", walltime_limit, "hours"), 
+        tags$span(paste("Max walltime for", input$cpus, "CPU/GPUs:", walltime_limit, "hours"), 
                   class = "limit-ok")
       }
     } 
@@ -176,9 +142,12 @@ server <- function(input, output, session) {
     max_cpus <- queue_param[queue == input$queue, max(max_cpus)]
     memory_limit <- current_memory_limit()
     walltime_limit <- current_walltime_limit()
+    valid_ncpu <- is_valid_cpu(input$cpus, input$queue)
     
-    if (is.na(max_cpus) | input$cpus > max_cpus) {
-      "CPUs requested out of range"
+    if(!valid_ncpu) {
+      "Invald number of CPU/GPUs for queue"
+    } else if (is.na(max_cpus) | input$cpus > max_cpus) {
+      "CPU/gPUs requested out of range"
     } else if (input$memory > memory_limit ){
       "Memory requested out of range"
     } else if (input$walltime > walltime_limit) {
