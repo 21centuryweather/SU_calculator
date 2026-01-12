@@ -1,3 +1,12 @@
+queue_param <-fread("queue_limits.csv")
+
+# Node and queue definitions
+node_queues <- list(
+  "Normal nodes (Cascade Lake)" = queue_param[node_type == "cascade_lake", queue],
+  "ARE (Broadwell)" = queue_param[node_type == "broadwell", queue],
+  "GPU" = queue_param[node_type == "gpu", queue]
+)
+
 is_valid_cpu <- function(input_cpu, this_queue) {
   valid <- TRUE
   if (this_queue %in% c("normal", "express", "hugemen", "megamen")) {

@@ -12,15 +12,6 @@ library(shinyjs)
 library(data.table)
 source("functions.R")
 
-queue_param <-fread("queue_limits.csv")
-
-# Node and queue definitions
-node_queues <- list(
-  "Normal nodes (Cascade Lake)" = queue_param[node_type == "cascade_lake", queue],
-  "ARE (Broadwell)" = queue_param[node_type == "broadwell", queue],
-  "GPU" = queue_param[node_type == "gpu", queue]
-)
-
 ui <- fluidPage(
   
   tags$head(
