@@ -1,45 +1,31 @@
-node_type,queue,max_jobs,cost,max_cpus,max_memory,max_jobfs,max_walltime
-cascade_lake,normal,1000,2,672,190,400,48
-cascade_lake,normal,1000,2,1440,190,400,24
-cascade_lake,normal,1000,2,2976,190,400,10
-cascade_lake,normal,1000,2,20736,190,400,5
-cascade_lake,normal-exec,300,2,672,190,400,48
-cascade_lake,normal-exec,300,2,1440,190,400,24
-cascade_lake,normal-exec,300,2,2976,190,400,10
-cascade_lake,normal-exec,300,2,20736,190,400,5
-cascade_lake,express,1000,6,480,190,400,24
-cascade_lake,express,1000,6,3168,190,400,5
-cascade_lake,express-exec,50,6,480,190,400,24
-cascade_lake,express-exec,50,6,3168,190,400,5
-cascade_lake,hugemem,1000,3,48,1470,1400,48
-cascade_lake,hugemem,1000,3,96,1470,1400,24
-cascade_lake,hugemem,1000,3,192,1470,1400,5
-cascade_lake,hugemem-exec,50,3,48,1470,1400,48
-cascade_lake,hugemem-exec,50,3,96,1470,1400,24
-cascade_lake,hugemem-exec,50,3,192,1470,1400,5
-cascade_lake,megamem,300,5,48,2990,1400,48
-cascade_lake,megamem,300,5,96,2990,1400,24
-cascade_lake,megamem-exec,50,5,48,2990,1400,48
-cascade_lake,megamem-exec,50,5,96,2990,1400,24
-cascade_lake,copyq,1000,2,1,190,200,10
-cascade_lake,copyq-exec,50,2,1,190,200,10
-broadwell,normalbw,1000,1.25,336,256,400,48
-broadwell,normalbw,1000,1.25,840,256,400,24
-broadwell,normalbw,1000,1.25,1736,256,400,10
-broadwell,normalbw,1000,1.25,10080,256,400,5
-broadwell,normalbw-exec,300,1.25,336,256,400,48
-broadwell,normalbw-exec,300,1.25,840,256,400,24
-broadwell,normalbw-exec,300,1.25,1736,256,400,10
-broadwell,normalbw-exec,300,1.25,10080,256,400,5
-broadwell,expressbw,1000,3.75,280,256,400,24
-broadwell,expressbw,1000,3.75,1848,256,400,5
-broadwell,expressbw-exec,50,3.75,280,256,400,24
-broadwell,expressbw-exec,50,3.75,1848,256,400,5
-broadwell,hugemembw,500,1.25,28,1020,390,48
-broadwell,hugemembw,500,1.25,140,1020,390,12
-broadwell,hugemembw-exec,100,1.25,28,1020,390,48
-broadwell,hugemembw-exec,100,1.25,140,1020,390,12
-broadwell,megamembw,300,1.25,32,3000,800,48
-broadwell,megamembw,300,1.25,64,3000,800,12
-broadwell,megamembw-exec,50,1.25,32,3000,800,48
-broadwell,megamembw-exec,50,1.25,64,3000,800,12
+node_type,queue,max_jobs,cost,max_cpus,max_memory,max_jobfs,max_walltime,cpu_per_node,cpu_limits
+cascade_lake,normal,300,2,672,190,400,48,48,1-48 or multiple of 48
+cascade_lake,normal,300,2,1440,190,400,24,48,1-48 or multiple of 48
+cascade_lake,normal,300,2,2976,190,400,10,48,1-48 or multiple of 48
+cascade_lake,normal,300,2,20736,190,400,5,48,1-48 or multiple of 48
+cascade_lake,express,50,6,480,190,400,24,48,1-48 or multiple of 48
+cascade_lake,express,50,6,3168,190,400,5,48,1-48 or multiple of 48
+cascade_lake,hugemem,50,3,48,1470,1400,48,48,1-48 or multiple of 48
+cascade_lake,hugemem,50,3,96,1470,1400,24,48,1-48 or multiple of 48
+cascade_lake,hugemem,50,3,192,1470,1400,5,48,1-48 or multiple of 48
+cascade_lake,megamem,50,5,48,2990,1400,48,48,1-48 or multiple of 48
+cascade_lake,megamem,50,5,96,2990,1400,24,48,1-48 or multiple of 48
+cascade_lake,copyq,50,2,1,190,200,10,1,1
+broadwell,normalbw,300,1.25,336,256,400,48,28,1-28 or multiple of 28
+broadwell,normalbw,300,1.25,840,256,400,24,28,1-28 or multiple of 28
+broadwell,normalbw,300,1.25,1736,256,400,10,28,1-28 or multiple of 28
+broadwell,normalbw,300,1.25,10080,256,400,5,28,1-28 or multiple of 28
+broadwell,expressbw,50,3.75,280,256,400,24,28,1-28 or multiple of 28
+broadwell,expressbw,50,3.75,1848,256,400,5,28,1-28 or multiple of 28
+broadwell,hugemembw,100,1.25,28,1020,390,48,28,"7, 14, 21, 28 or multiple of 28"
+broadwell,hugemembw,100,1.25,140,1020,390,12,28,"7, 14, 21, 28 or multiple of 28"
+broadwell,megamembw,50,1.25,32,3000,800,48,64,"32, 64"
+broadwell,megamembw,50,1.25,64,3000,800,12,64,"32, 64"
+gpu,dgxa100,50,4.5,128,2000,28000,48,16,multiple of 16
+gpu,dgxa100,50,4.5,256,2000,28000,5,16,multiple of 16
+gpu,gpuhopper,50,7.5,96,1024,1741,48,48,"12, 24, 36, 48 or multiple of 48"
+gpu,gpuhopper,50,7.5,192,1024,1741,24,48,"12, 24, 36, 48 or multiple of 48"
+gpu,gpuhopper,50,7.5,720,1024,1741,5,48,"12, 24, 36, 48 or multiple of 48"
+gpu,gpuvolta,50,3,96,382,400,48,48,multiple of 12
+gpu,gpuvolta,50,3,192,382,400,24,48,multiple of 12
+gpu,gpuvolta,50,3,960,382,400,5,48,multiple of 12
