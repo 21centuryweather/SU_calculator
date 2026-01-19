@@ -23,7 +23,7 @@ ui <- fluidPage(
     sidebarPanel(
       radioButtons("node", "Select node type:", choices = names(node_queues)),
       selectInput("queue", "Queue:", choices = node_queues[[1]]),
-      numericInput("cpus", "CPU/GPUs:", value = 1, min = 1),
+      shiny::uiOutput("cpus"),
       div(class = "limit-text", uiOutput("cpu_limit_text")),
       
       numericInput("memory", "Memory (GB):", value = 1, min = 1),
@@ -59,6 +59,28 @@ server <- function(input, output, session) {
     updateSelectInput(session, "queue", choices = node_queues[[input$node]])
   })
   
+  
+  output$cpus <- renderUI({
+    if (input$node == "GPU") {
+      numericInput("cpus", "GPUs:", value = 1, min = 1) 
+    } else {
+      numericInput("cpus", "CPUs:", value = 1, min = 1)
+    }
+  })
+
+  
+  cpus <- reactive({
+    req(input$node, input$queue, input$cpus)
+    
+    if(input$node == "GPU") {
+      gpu_to_cpu(input$queue, input$cpus)
+    } else {
+      input$cpus
+    }
+    
+  })
+
+  
   # Reactive values for limits
   current_memory_limit <- reactive({
     req(input$queue)
@@ -67,7 +89,7 @@ server <- function(input, output, session) {
   
   current_walltime_limit <- reactive({
     req(input$queue, input$cpus)
-    get_walltime_limit(input$queue, input$cpus)
+    get_walltime_limit(input$queue, cpus())
   })
   
   # Update input limits
@@ -89,10 +111,11 @@ server <- function(input, output, session) {
   
   # Display CPU limit information
   output$cpu_limit_text <- renderUI({
-    req(input$queue, input$cpus)
+    req(input$node, input$queue, input$cpus)
+    
     max_cpus <- queue_param[queue == input$queue, max(max_cpus)]
     if(!is.na(max_cpus)) {
-      cpu_message(input$cpus, input$queue, max_cpus)
+      cpu_message(cpus(), input$queue, max_cpus)
     }
   })
   
@@ -118,10 +141,10 @@ server <- function(input, output, session) {
     walltime_limit <- current_walltime_limit()
     if(!is.na(walltime_limit) && length(walltime_limit) > 0) {
       if(input$walltime > walltime_limit) {
-        tags$span(paste("Max walltime for", input$cpus, "CPU/GPUs:", walltime_limit, "hours"), 
+        tags$span(paste("Max walltime for", cpus(), "CPUs:", walltime_limit, "hours"), 
                   class = "limit-exceeded")
       } else {
-        tags$span(paste("Max walltime for", input$cpus, "CPU/GPUs:", walltime_limit, "hours"), 
+        tags$span(paste("Max walltime for", cpus(), "CPUs:", walltime_limit, "hours"), 
                   class = "limit-ok")
       }
     } 
@@ -133,18 +156,18 @@ server <- function(input, output, session) {
     max_cpus <- queue_param[queue == input$queue, max(max_cpus)]
     memory_limit <- current_memory_limit()
     walltime_limit <- current_walltime_limit()
-    valid_ncpu <- is_valid_cpu(input$cpus, input$queue)
+    valid_ncpu <- is_valid_cpu(cpus(), input$queue)
     
     if(!valid_ncpu) {
-      "Invald number of CPU/GPUs for queue"
-    } else if (is.na(max_cpus) | input$cpus > max_cpus) {
-      "CPU/gPUs requested out of range"
+      "Invald number of CPU for queue"
+    } else if (is.na(max_cpus) | cpus() > max_cpus) {
+      "CPU/GPUs requested out of range"
     } else if (input$memory > memory_limit ){
       "Memory requested out of range"
     } else if (input$walltime > walltime_limit) {
       "Walltime requested out of range"
     } else {
-      su <- calculate_SU(input$queue, input$cpus, input$memory, input$walltime)
+      su <- calculate_SU(input$queue, cpus(), input$memory, input$walltime)
       paste("SU Cost:", su)
     }
   })

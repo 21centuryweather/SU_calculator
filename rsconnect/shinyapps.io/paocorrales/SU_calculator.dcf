@@ -5,7 +5,7 @@ account: paocorrales
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 15559976
-bundleId: 11430932
+bundleId: 11462346
 url: https://paocorrales.shinyapps.io/SU_calculator/
 version: 1
 asMultiple: FALSE

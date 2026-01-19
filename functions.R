@@ -48,8 +48,16 @@ is_valid_cpu <- function(input_cpu, this_queue) {
 
 cpu_message <- function(input_cpu, this_queue, max_cpus) {
   
+  if(this_queue %in% c("gpuhopper", "gpuvolta")) {
+    gpu_message <- "1 GPU = 12 CPUs. "
+  } else if (this_queue == "dgxa100") {
+    gpu_message <- "1 GPU = 16 CPUs. "
+  } else {
+    gpu_message <- NULL
+  }
+  
   if(input_cpu > max_cpus) {
-    return(tags$span(paste("Max CPU/GPUs for this queue:", max_cpus),
+    return(tags$span(paste0(gpu_message, "Max CPUs for this queue: ", max_cpus),
                      class = "limit-exceeded"))
   }
   
@@ -57,11 +65,11 @@ cpu_message <- function(input_cpu, this_queue, max_cpus) {
   valid_ncpu <- is_valid_cpu(input_cpu, this_queue)
   
   if (!valid_ncpu) {
-    return(tags$span(paste("Invalid CPU/GPUs for this queue:", queue_param[queue == this_queue, cpu_limits[1]]),
+    return(tags$span(paste0(gpu_message, "Invalid CPUs for this queue: ", queue_param[queue == this_queue, cpu_limits[1]]),
                      class = "limit-exceeded"))      
   }
   
-  return(tags$span(paste("Max CPU/GPUs for this queue:", max_cpus),
+  return(tags$span(paste0(gpu_message, "Max CPUs for this queue: ", max_cpus),
                    class = "limit-ok"))
 }
 
@@ -77,6 +85,16 @@ get_memory_limit <- function(this_queue) {
   queue_param[queue == this_queue] |> 
     _[, unique(max_memory)]
   
+}
+
+gpu_to_cpu <- function(this_queue, gpu) {
+  
+  if (this_queue == "dgxa100") {
+    cpu <- gpu * 16
+  } else {
+    cpu <- gpu * 12
+  }
+  return(cpu)
 }
 
 calculate_memory_blocks <- function(this_queue) {
