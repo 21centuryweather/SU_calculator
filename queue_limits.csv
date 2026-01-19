@@ -1,10 +1,10 @@
 node_type,queue,max_jobs,cost,max_cpus,max_memory,max_jobfs,max_walltime,cpu_per_node,cpu_limits
-cascade_lake,normal,300,2,672,190,400,48,48,1-48 or multiple of 48
-cascade_lake,normal,300,2,1440,190,400,24,48,1-48 or multiple of 48
-cascade_lake,normal,300,2,2976,190,400,10,48,1-48 or multiple of 48
-cascade_lake,normal,300,2,20736,190,400,5,48,1-48 or multiple of 48
-cascade_lake,express,50,6,480,190,400,24,48,1-48 or multiple of 48
-cascade_lake,express,50,6,3168,190,400,5,48,1-48 or multiple of 48
+cascade_lake,normal,300,2,672,192,400,48,48,1-48 or multiple of 48
+cascade_lake,normal,300,2,1440,192,400,24,48,1-48 or multiple of 48
+cascade_lake,normal,300,2,2976,192,400,10,48,1-48 or multiple of 48
+cascade_lake,normal,300,2,20736,192,400,5,48,1-48 or multiple of 48
+cascade_lake,express,50,6,480,192,400,24,48,1-48 or multiple of 48
+cascade_lake,express,50,6,3168,192,400,5,48,1-48 or multiple of 48
 cascade_lake,hugemem,50,3,48,1470,1400,48,48,1-48 or multiple of 48
 cascade_lake,hugemem,50,3,96,1470,1400,24,48,1-48 or multiple of 48
 cascade_lake,hugemem,50,3,192,1470,1400,5,48,1-48 or multiple of 48
