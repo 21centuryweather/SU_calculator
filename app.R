@@ -82,10 +82,20 @@ server <- function(input, output, session) {
 
   
   # Reactive values for limits
-  current_memory_limit <- reactive({
+  node_memory_limit <- reactive({
     req(input$queue)
     get_memory_limit(input$queue)
   })
+  
+  current_memory_limit <- reactive({
+    req(input$queue, input$cpus)
+    memory_per_node <- get_memory_limit(input$queue)
+    cpus_per_node <- get_cpus_per_node(input$queue)
+    
+    ceiling(cpus()/cpus_per_node) * memory_per_node
+      
+  })
+  
   
   current_walltime_limit <- reactive({
     req(input$queue, input$cpus)
@@ -124,12 +134,13 @@ server <- function(input, output, session) {
   output$memory_limit_text <- renderUI({
     req(input$queue)
     memory_limit <- current_memory_limit()
+    memory_limit_per_node <- node_memory_limit()
     if(!is.na(memory_limit) && length(memory_limit) > 0) {
       if(input$memory > memory_limit) {
-        tags$span(paste("Max memory for this queue:", memory_limit, "GB"), 
+        tags$span(paste("Max memory for this queue:", memory_limit_per_node, "GB per node. Memory limit for", cpus(), "CPUs:", memory_limit, "GB"), 
                   class = "limit-exceeded")
       } else {
-        tags$span(paste("Max memory for this queue:", memory_limit, "GB"), 
+        tags$span(paste("Max memory for this queue:", memory_limit_per_node, "GB per node"), 
                   class = "limit-ok")
       }
     }

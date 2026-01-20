@@ -87,6 +87,13 @@ get_memory_limit <- function(this_queue) {
   
 }
 
+get_cpus_per_node <- function(this_queue) {
+  
+  queue_param[queue == this_queue] |> 
+    _[, unique(cpu_per_node)]
+  
+}
+
 gpu_to_cpu <- function(this_queue, gpu) {
   
   if (this_queue == "dgxa100") {
